@@ -37,7 +37,7 @@ interface ResumeData {
   skills: string[];
 }
 
-export const ResumeCreator = ({ onClose }: { onClose: () => void }) => {
+export const ResumeCreator = ({ onClose, onResumeCreated }: { onClose: () => void; onResumeCreated?: () => void }) => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
@@ -157,6 +157,7 @@ export const ResumeCreator = ({ onClose }: { onClose: () => void }) => {
         description: "Resume created successfully!"
       });
       onClose();
+      onResumeCreated?.();
     } catch (error: any) {
       console.error("Error creating resume:", error);
       toast({

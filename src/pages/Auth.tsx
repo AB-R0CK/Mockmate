@@ -58,7 +58,9 @@ export default function Auth() {
             emailRedirectTo: redirectUrl,
             data: {
               username,
-            }
+            },
+            // Disable email confirmation for development
+            emailConfirm: false
           }
         });
 
@@ -104,6 +106,12 @@ export default function Auth() {
             toast({
               title: "Sign in failed",
               description: "Invalid email or password. Please try again.",
+              variant: "destructive",
+            });
+          } else if (error.message.includes("Email not confirmed")) {
+            toast({
+              title: "Email not confirmed",
+              description: "Please check your email and click the confirmation link, or disable email confirmation in Supabase settings for development.",
               variant: "destructive",
             });
           } else if (error.message.includes("fetch") || error.message.includes("network") || error.message.includes("Failed to fetch")) {

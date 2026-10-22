@@ -3,15 +3,16 @@ import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { 
-  FileText, 
-  BarChart3, 
-  Target, 
-  AlertTriangle, 
+import {
+  FileText,
+  BarChart3,
+  Target,
+  AlertTriangle,
   TrendingUp,
   Download,
   Share,
-  Edit
+  Edit,
+  Eye
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -28,10 +29,19 @@ interface UserProfile {
   ats_score: number;
 }
 
+interface ResumeData {
+  id: string;
+  title: string;
+  template_name: string;
+  created_at: string;
+  content?: any;
+}
+
 export const Dashboard = () => {
   const { user } = useAuth();
   const [jobRecommendations, setJobRecommendations] = useState<JobRecommendationData[]>([]);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [resumes, setResumes] = useState<ResumeData[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -39,6 +49,53 @@ export const Dashboard = () => {
       fetchUserData();
     }
   }, [user]);
+
+  const handleDownloadResume = (resume: ResumeData) => {
+    if (!resume.content) {
+      return;
+    }
+
+    // Create a simple text representation of the resume
+    const resumeText = `
+${resume.content.personal?.fullName || 'Resume'}
+${resume.content.personal?.email || ''}
+${resume.content.personal?.phone || ''}
+${resume.content.personal?.location || ''}
+
+PROFESSIONAL SUMMARY
+${resume.content.personal?.summary || ''}
+
+EDUCATION
+${resume.content.education?.map((edu: any) => 
+  `${edu.degree} - ${edu.institution} (${edu.year})`
+).join('\n') || ''}
+
+EXPERIENCE
+${resume.content.experience?.map((exp: any) => 
+  `${exp.title} at ${exp.company} (${exp.duration})
+${exp.description}`
+).join('\n\n') || ''}
+
+SKILLS
+${resume.content.skills?.join(', ') || ''}
+    `.trim();
+
+    // Create a blob and download
+    const blob = new Blob([resumeText], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${resume.title.replace(/\s+/g, '_')}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleViewResume = (resume: ResumeData) => {
+    // For now, just show an alert - in future could open a modal
+    alert(`Viewing resume: ${resume.title}\n\nFull resume viewer coming soon!`);
+  };
 
   const fetchUserData = async () => {
     try {
@@ -68,6 +125,19 @@ export const Dashboard = () => {
       } else {
         setJobRecommendations(jobs || []);
       }
+
+      // Fetch resumes
+      const { data: resumeData, error: resumeError } = await supabase
+        .from("resumes")
+        .select("id, title, template_name, created_at, content")
+        .eq("user_id", user!.id)
+        .order("created_at", { ascending: false });
+
+      if (resumeError) {
+        console.error("Error fetching resumes:", resumeError);
+      } else {
+        setResumes(resumeData || []);
+      }
     } catch (error) {
       console.error("Error fetching user data:", error);
     } finally {
@@ -75,18 +145,18 @@ export const Dashboard = () => {
     }
   };
   return (
-    <section className="py-20 px-6">
+    <section className="py-12 md:py-20 px-4 md:px-6">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-4">
+        <div className="text-center mb-8 md:mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-4">
             Your Resume Analytics Dashboard
           </h2>
-          <p className="text-xl text-muted-foreground">
+          <p className="text-lg md:text-xl text-muted-foreground">
             Comprehensive analysis and insights for your career advancement
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* ATS Score Card */}
           <Card className="lg:col-span-2 bg-gradient-glass backdrop-blur-glass border border-white/10 p-6">
             <div className="flex items-center justify-between mb-6">
@@ -210,6 +280,61 @@ export const Dashboard = () => {
             </div>
           </Card>
 
+          {/* My Resumes */}
+          <Card className="bg-gradient-glass backdrop-blur-glass border border-white/10 p-6">
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="p-2 bg-primary/20 rounded-lg">
+                <FileText className="w-6 h-6 text-primary" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold">My Resumes</h3>
+                <p className="text-muted-foreground text-sm">Created resumes</p>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              {resumes.length > 0 ? (
+                resumes.map((resume) => (
+                  <div key={resume.id} className="p-3 bg-muted/10 rounded-lg border border-white/5 hover:border-white/10 transition-colors">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <h4 className="font-medium text-sm">{resume.title}</h4>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {resume.template_name} • {new Date(resume.created_at).toLocaleDateString()}
+                        </p>
+                      </div>
+                      <div className="flex gap-1">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0"
+                          onClick={() => handleViewResume(resume)}
+                          title="View Resume"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0"
+                          onClick={() => handleDownloadResume(resume)}
+                          title="Download Resume"
+                        >
+                          <Download className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-6">
+                  <FileText className="w-8 h-8 text-muted-foreground/50 mx-auto mb-2" />
+                  <p className="text-sm text-muted-foreground">No resumes created yet</p>
+                </div>
+              )}
+            </div>
+          </Card>
+
           {/* Skill Gaps */}
           <Card className="bg-gradient-glass backdrop-blur-glass border border-white/10 p-6">
             <div className="flex items-center space-x-3 mb-6">
@@ -221,7 +346,7 @@ export const Dashboard = () => {
                 <p className="text-muted-foreground text-sm">Areas for improvement</p>
               </div>
             </div>
-            
+
             <div className="space-y-3">
               <SkillGap skill="Cloud Computing" priority="High" />
               <SkillGap skill="DevOps" priority="Medium" />

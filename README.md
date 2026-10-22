@@ -48,7 +48,7 @@ npm install
 
 ```env
 VITE_SUPABASE_URL=your-supabase-project-url
-VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
+VITE_SUPABASE_PUBLISHABLE_KEY=your-supabase-anon-key
 ```
 
 ### Step 4: Run database migrations

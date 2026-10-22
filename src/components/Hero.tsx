@@ -48,7 +48,7 @@ export const Hero = () => {
   const handleCreateResume = () => {
     if (!user) {
       toast({
-        title: "Sign in required", 
+        title: "Sign in required",
         description: "Please sign in to create a resume",
         variant: "destructive"
       });
@@ -56,6 +56,12 @@ export const Hero = () => {
       return;
     }
     setShowResumeCreator(true);
+  };
+
+  const handleResumeCreated = () => {
+    setShowResumeCreator(false);
+    // Navigate to dashboard to refresh and show the new resume
+    navigate("/");
   };
 
   const handleAnalysisComplete = (analysis: ATSAnalysis) => {
@@ -70,42 +76,42 @@ export const Hero = () => {
       <div className="absolute bottom-20 right-20 w-96 h-96 bg-secondary/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
       
       {/* Main Content */}
-      <div className="relative z-10 text-center max-w-6xl mx-auto px-6">
-        <div className="space-y-8">
+      <div className="relative z-10 text-center max-w-6xl mx-auto px-4 md:px-6">
+        <div className="space-y-6 md:space-y-8">
           <div className="space-y-4">
-            <h1 className="text-6xl md:text-8xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-bold bg-gradient-primary bg-clip-text text-transparent">
               MockMate
             </h1>
-            <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto">
+            <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-3xl mx-auto px-4">
               AI-Powered Resume Optimization & ATS Scoring Platform
             </p>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Create stunning resumes, analyze ATS compatibility, get job recommendations, 
+            <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto px-4">
+              Create stunning resumes, analyze ATS compatibility, get job recommendations,
               and practice interviews with our futuristic career platform.
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-            <Button 
-              variant="hero" 
-              size="lg" 
-              className="text-lg px-8 py-6 group relative overflow-hidden" 
+          <div className="flex flex-col sm:flex-row gap-4 md:gap-6 justify-center items-center px-4">
+            <Button
+              variant="hero"
+              size="lg"
+              className="text-base md:text-lg px-6 md:px-8 py-4 md:py-6 group relative overflow-hidden w-full sm:w-auto"
               onClick={handleUploadResume}
             >
-              <span className="relative z-10 flex items-center">
-                <Upload className="w-5 h-5 mr-2" />
+              <span className="relative z-10 flex items-center justify-center">
+                <Upload className="w-4 h-4 md:w-5 md:h-5 mr-2" />
                 Upload Resume
               </span>
               <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
             </Button>
-            <Button 
-              variant="neon" 
-              size="lg" 
-              className="text-lg px-8 py-6 group relative overflow-hidden" 
+            <Button
+              variant="neon"
+              size="lg"
+              className="text-base md:text-lg px-6 md:px-8 py-4 md:py-6 group relative overflow-hidden w-full sm:w-auto"
               onClick={handleCreateResume}
             >
-              <span className="relative z-10 flex items-center">
-                <Scan className="w-5 h-5 mr-2" />
+              <span className="relative z-10 flex items-center justify-center">
+                <Scan className="w-4 h-4 md:w-5 md:h-5 mr-2" />
                 Create New Resume
               </span>
               <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
@@ -113,7 +119,7 @@ export const Hero = () => {
           </div>
 
           {/* Feature Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mt-12 md:mt-16 px-4">
             <FeatureCard
               icon={<Scan className="w-8 h-8" />}
               title="AI Resume Analysis"
@@ -135,7 +141,10 @@ export const Hero = () => {
 
       {/* Modals */}
       {showResumeCreator && (
-        <ResumeCreator onClose={() => setShowResumeCreator(false)} />
+        <ResumeCreator
+          onClose={() => setShowResumeCreator(false)}
+          onResumeCreated={handleResumeCreated}
+        />
       )}
       
       {showPdfUploader && (
@@ -159,10 +168,10 @@ const FeatureCard = ({ icon, title, description }: { icon: React.ReactNode; titl
   return (
     <div className="group relative">
       <div className="absolute inset-0 bg-gradient-primary opacity-0 rounded-2xl blur-xl group-hover:opacity-20 transition-opacity duration-500"></div>
-      <div className="relative bg-gradient-glass backdrop-blur-glass border border-white/10 rounded-2xl p-6 hover:border-white/20 transition-all duration-300 shadow-glass hover:shadow-glass-lg hover:-translate-y-1">
+      <div className="relative bg-gradient-glass backdrop-blur-glass border border-white/10 rounded-2xl p-4 md:p-6 hover:border-white/20 transition-all duration-300 shadow-glass hover:shadow-glass-lg hover:-translate-y-1">
         <div className="text-primary mb-4 group-hover:scale-110 transition-transform duration-300">{icon}</div>
-        <h3 className="text-xl font-semibold text-foreground mb-2">{title}</h3>
-        <p className="text-muted-foreground">{description}</p>
+        <h3 className="text-lg md:text-xl font-semibold text-foreground mb-2">{title}</h3>
+        <p className="text-sm md:text-base text-muted-foreground">{description}</p>
       </div>
     </div>
   );
