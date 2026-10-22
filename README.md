@@ -1,73 +1,87 @@
-# Welcome to your Lovable project
+# MockMate AI Career Coach
 
-## Project info
+AI-Powered Resume Optimization & ATS Scoring Platform
 
-**URL**: https://lovable.dev/projects/5f8f1b6a-24e2-470e-9806-e34192a73bcf
+## Features
 
-## How can I edit this code?
+- **AI Resume Analysis**: Advanced keyword extraction and ATS compatibility scoring
+- **Smart Job Matching**: Get personalized job recommendations based on your profile
+- **Skill Gap Analysis**: Identify weaknesses and improve your competitive edge
+- **Resume Builder**: Create professional resumes with modern templates
+- **User Authentication**: Secure sign-up and sign-in with Supabase
 
-There are several ways of editing your application.
-
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/5f8f1b6a-24e2-470e-9806-e34192a73bcf) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
+## Tech Stack
 
 - Vite
 - TypeScript
 - React
 - shadcn-ui
 - Tailwind CSS
+- Supabase (Authentication & Database)
 
-## How can I deploy this project?
+## Setup Instructions
 
-Simply open [Lovable](https://lovable.dev/projects/5f8f1b6a-24e2-470e-9806-e34192a73bcf) and click on Share -> Publish.
+### Prerequisites
 
-## Can I connect a custom domain to my Lovable project?
+- Node.js & npm installed
+- A Supabase project (free at https://supabase.com)
 
-Yes, you can!
+### Step 1: Clone the repository
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+```sh
+git clone https://github.com/AB-R0CK/Mockmate.git
+cd Mockmate
+```
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+### Step 2: Install dependencies
+
+```sh
+npm install
+```
+
+### Step 3: Set up Supabase
+
+1. Go to [Supabase](https://supabase.com) and create a new project
+2. Once created, go to Project Settings > API
+3. Copy your Project URL and anon/public API key
+4. Create a `.env` file in the root directory:
+
+```env
+VITE_SUPABASE_URL=your-supabase-project-url
+VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
+```
+
+### Step 4: Run database migrations
+
+1. Go to your Supabase project dashboard
+2. Navigate to SQL Editor
+3. Run the SQL commands from `supabase/migrations/20250813034102-.sql`
+4. Then run the SQL commands from `supabase/migrations/20250813034121-.sql`
+
+### Step 5: Start the development server
+
+```sh
+npm run dev
+```
+
+Open http://localhost:8080 in your browser
+
+## Database Schema
+
+The application uses the following tables:
+
+- **profiles**: User profile information with ATS scores
+- **resumes**: User-created resumes
+- **job_recommendations**: AI-generated job recommendations
+
+## Deployment
+
+To deploy this project:
+
+1. Build the project: `npm run build`
+2. Deploy to Vercel, Netlify, or any static hosting service
+3. Set environment variables in your deployment platform
+
+## License
+
+MIT
